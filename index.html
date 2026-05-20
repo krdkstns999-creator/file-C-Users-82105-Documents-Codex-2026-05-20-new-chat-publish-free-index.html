@@ -1,0 +1,1267 @@
+﻿<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>FitPlate Coach</title>
+    <style>
+:root {
+  --ink: #17211b;
+  --muted: #607066;
+  --line: #d8ded6;
+  --paper: #f7f7f1;
+  --panel: #ffffff;
+  --green: #2f7d55;
+  --lime: #b9d86b;
+  --tomato: #db6246;
+  --sky: #478ac9;
+  --gold: #d49a31;
+  --shadow: 0 18px 42px rgba(35, 44, 38, 0.11);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--ink);
+  background:
+    linear-gradient(135deg, rgba(71, 138, 201, 0.14), transparent 32%),
+    radial-gradient(circle at 80% 8%, rgba(185, 216, 107, 0.28), transparent 26%),
+    var(--paper);
+  font-family:
+    Inter, Pretendard, "Noto Sans KR", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", sans-serif;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+svg {
+  width: 20px;
+  height: 20px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.app-shell {
+  display: grid;
+  grid-template-columns: 300px minmax(0, 1fr);
+  min-height: 100vh;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+  border-right: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.76);
+  backdrop-filter: blur(18px);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding-bottom: 8px;
+}
+
+.brand-mark {
+  display: grid;
+  width: 44px;
+  height: 44px;
+  place-items: center;
+  color: white;
+  border-radius: 8px;
+  background: linear-gradient(135deg, var(--green), #1d5742);
+}
+
+.brand h1,
+.brand p,
+.topbar h2,
+.topbar p,
+.panel h3 {
+  margin: 0;
+}
+
+.brand h1 {
+  font-size: 19px;
+  letter-spacing: 0;
+}
+
+.brand p,
+.eyebrow {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.primary-action,
+.ghost-action,
+.icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+}
+
+.primary-action {
+  width: 100%;
+  color: white;
+  background: var(--green);
+  box-shadow: 0 10px 22px rgba(47, 125, 85, 0.22);
+}
+
+.ghost-action,
+.icon-button {
+  color: var(--ink);
+  background: #f4f6f0;
+  border-color: var(--line);
+}
+
+.icon-button {
+  width: 42px;
+  padding: 0;
+}
+
+.danger-action {
+  color: #a33a2c;
+}
+
+.member-list {
+  display: grid;
+  gap: 10px;
+  overflow: auto;
+}
+
+.member-card {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 8px;
+  width: 100%;
+  padding: 14px;
+  text-align: left;
+  color: var(--ink);
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.member-card.active {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(47, 125, 85, 0.12);
+}
+
+.member-card strong {
+  display: block;
+  font-size: 15px;
+}
+
+.member-card span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.member-card i {
+  align-self: start;
+  padding: 4px 8px;
+  color: var(--green);
+  background: #e9f3df;
+  border-radius: 999px;
+  font-size: 12px;
+  font-style: normal;
+}
+
+.workspace {
+  min-width: 0;
+  padding: 28px;
+}
+
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 24px;
+}
+
+.topbar h2 {
+  margin-top: 3px;
+  font-size: 34px;
+  letter-spacing: 0;
+}
+
+.topbar-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.coach-grid {
+  display: grid;
+  grid-template-columns: minmax(320px, 1.05fr) minmax(300px, 0.95fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.panel {
+  min-width: 0;
+  padding: 20px;
+  background: var(--panel);
+  border: 1px solid rgba(216, 222, 214, 0.92);
+  border-radius: 8px;
+  box-shadow: var(--shadow);
+}
+
+.panel-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.panel-heading h3 {
+  font-size: 18px;
+}
+
+.panel-heading span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.field-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+label {
+  display: grid;
+  gap: 7px;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+input,
+select,
+textarea {
+  width: 100%;
+  min-height: 42px;
+  padding: 10px 12px;
+  color: var(--ink);
+  background: #fbfcf8;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  outline: none;
+}
+
+textarea {
+  resize: vertical;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  border-color: var(--green);
+  box-shadow: 0 0 0 3px rgba(47, 125, 85, 0.13);
+}
+
+.full-field {
+  margin-top: 14px;
+}
+
+.summary-panel {
+  position: relative;
+  overflow: hidden;
+}
+
+.summary-panel::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(135deg, rgba(219, 98, 70, 0.11), transparent 46%),
+    linear-gradient(315deg, rgba(185, 216, 107, 0.18), transparent 50%);
+}
+
+.summary-panel > * {
+  position: relative;
+}
+
+.macro-ring {
+  display: grid;
+  width: min(240px, 74vw);
+  aspect-ratio: 1;
+  place-items: center;
+  margin: 6px auto 20px;
+  border-radius: 50%;
+  background: conic-gradient(var(--green) 0 40%, var(--sky) 40% 72%, var(--tomato) 72% 100%);
+}
+
+.macro-ring::before {
+  content: "";
+  position: absolute;
+  width: 64%;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: white;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+.macro-ring div {
+  z-index: 1;
+  display: grid;
+  text-align: center;
+}
+
+.macro-ring strong {
+  font-size: 42px;
+  line-height: 1;
+}
+
+.macro-ring span {
+  color: var(--muted);
+}
+
+.macro-bars {
+  display: grid;
+  gap: 13px;
+}
+
+.macro-bars div {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 7px 10px;
+}
+
+.macro-bars span {
+  color: var(--muted);
+}
+
+.macro-bars i {
+  grid-column: 1 / -1;
+  height: 9px;
+  overflow: hidden;
+  background: #edf0e9;
+  border-radius: 999px;
+}
+
+.macro-bars i::before {
+  content: "";
+  display: block;
+  width: var(--bar);
+  height: 100%;
+  background: linear-gradient(90deg, var(--green), var(--lime));
+  border-radius: inherit;
+}
+
+.meal-panel,
+.message-panel {
+  grid-column: 1 / -1;
+}
+
+.meal-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.meal-card {
+  display: grid;
+  gap: 10px;
+  padding: 15px;
+  background: #fbfcf8;
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.meal-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.meal-card h4 {
+  margin: 0;
+  font-size: 15px;
+}
+
+.meal-card span {
+  color: var(--muted);
+  font-size: 12px;
+}
+
+.meal-card p {
+  margin: 0;
+  line-height: 1.55;
+}
+
+.macro-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.macro-pills span {
+  padding: 6px 9px;
+  color: var(--ink);
+  background: #eef5e5;
+  border: 1px solid #dbe9c7;
+  border-radius: 999px;
+  font-size: 12px;
+}
+
+.grocery-list {
+  display: grid;
+  gap: 12px;
+}
+
+.choice-group {
+  display: grid;
+  gap: 9px;
+}
+
+.choice-group h4 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.choice-group div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 9px;
+}
+
+.grocery-list span,
+.choice-group span {
+  padding: 8px 10px;
+  background: #f4f6f0;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 13px;
+}
+
+#clientMessage {
+  min-height: 220px;
+  background: #fbfcf8;
+  line-height: 1.6;
+}
+
+.toast {
+  position: fixed;
+  right: 24px;
+  bottom: 24px;
+  max-width: min(340px, calc(100vw - 48px));
+  padding: 12px 14px;
+  color: white;
+  background: rgba(23, 33, 27, 0.94);
+  border-radius: 8px;
+  opacity: 0;
+  transform: translateY(10px);
+  transition: 0.2s ease;
+  pointer-events: none;
+}
+
+.toast.show {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.client-view .app-shell {
+  grid-template-columns: 1fr;
+}
+
+.client-view .sidebar,
+.client-view .profile-panel,
+.client-view .message-panel,
+.client-view #adminLinkBtn,
+.client-view #inviteLinkBtn,
+.client-view #copyPlanBtn,
+.client-view #deleteMemberBtn,
+.client-view #resetBtn {
+  display: none;
+}
+
+.client-view .workspace {
+  width: min(1120px, 100%);
+  margin: 0 auto;
+}
+
+.client-view .coach-grid {
+  grid-template-columns: minmax(280px, 0.85fr) minmax(320px, 1.15fr);
+}
+
+.client-view .meal-panel {
+  grid-column: 2;
+}
+
+@media (max-width: 980px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    position: static;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .member-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .coach-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .field-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .meal-list {
+    grid-template-columns: 1fr;
+  }
+
+  .client-view .meal-panel {
+    grid-column: 1;
+  }
+}
+
+@media (max-width: 620px) {
+  .workspace,
+  .sidebar {
+    padding: 18px;
+  }
+
+  .topbar {
+    align-items: flex-start;
+  }
+
+  .topbar h2 {
+    font-size: 26px;
+  }
+
+  .field-grid,
+  .member-list {
+    grid-template-columns: 1fr;
+  }
+
+  .panel {
+    padding: 16px;
+  }
+}
+
+</style>
+  </head>
+  <body>
+    <main class="app-shell">
+      <aside class="sidebar" aria-label="회원 목록">
+        <div class="brand">
+          <div class="brand-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24"><path d="M5 11h14M7 7h10M8 15h8M10 19h4" /></svg>
+          </div>
+          <div>
+            <h1>FitPlate Coach</h1>
+            <p>회원 식단 관리</p>
+          </div>
+        </div>
+
+        <button class="primary-action" id="addMemberBtn" type="button">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14M5 12h14" /></svg>
+          회원 추가
+        </button>
+
+        <div class="member-list" id="memberList"></div>
+      </aside>
+
+      <section class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">오늘의 관리 회원</p>
+            <h2 id="memberTitle">-</h2>
+          </div>
+          <div class="topbar-actions">
+            <button class="icon-button" id="adminLinkBtn" type="button" title="관리자 링크 복사">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" /><path d="M9 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8" /><path d="M19 8v6" /><path d="M22 11h-6" /></svg>
+            </button>
+            <button class="icon-button" id="inviteLinkBtn" type="button" title="회원 초대 링크 복사">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" /><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" /></svg>
+            </button>
+            <button class="icon-button" id="copyPlanBtn" type="button" title="식단 복사">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h10v12H8z" /><path d="M6 16H4V4h12v2" /></svg>
+            </button>
+            <button class="icon-button danger-action" id="deleteMemberBtn" type="button" title="회원 삭제">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18" /><path d="M8 6V4h8v2" /><path d="M19 6l-1 14H6L5 6" /><path d="M10 11v5" /><path d="M14 11v5" /></svg>
+            </button>
+            <button class="icon-button" id="resetBtn" type="button" title="샘플 초기화">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4v6h6" /><path d="M20 12a8 8 0 1 1-2.34-5.66L4 10" /></svg>
+            </button>
+          </div>
+        </header>
+
+        <section class="coach-grid">
+          <form class="panel profile-panel" id="profileForm">
+            <div class="panel-heading">
+              <h3>회원 프로필</h3>
+              <span id="savedState">저장됨</span>
+            </div>
+
+            <div class="field-grid">
+              <label>
+                이름
+                <input id="name" name="name" type="text" autocomplete="off" />
+              </label>
+              <label>
+                목표
+                <select id="goal" name="goal">
+                  <option value="fatLoss">감량</option>
+                  <option value="muscleGain">증량</option>
+                  <option value="maintain">유지</option>
+                </select>
+              </label>
+              <label>
+                성별
+                <select id="sex" name="sex">
+                  <option value="female">여성</option>
+                  <option value="male">남성</option>
+                </select>
+              </label>
+              <label>
+                나이
+                <input id="age" name="age" type="number" min="12" max="90" />
+              </label>
+              <label>
+                키(cm)
+                <input id="height" name="height" type="number" min="120" max="230" />
+              </label>
+              <label>
+                체중(kg)
+                <input id="weight" name="weight" type="number" min="30" max="220" step="0.1" />
+              </label>
+              <label>
+                체지방률(%)
+                <input id="bodyFatPercent" name="bodyFatPercent" type="number" min="3" max="60" step="0.1" />
+              </label>
+              <label>
+                체지방량(kg)
+                <input id="bodyFatMass" name="bodyFatMass" type="number" min="1" max="90" step="0.1" />
+              </label>
+              <label>
+                골격근량(kg)
+                <input id="skeletalMuscle" name="skeletalMuscle" type="number" min="5" max="70" step="0.1" />
+              </label>
+              <label>
+                기초대사량(kcal)
+                <input id="bmr" name="bmr" type="number" min="800" max="3000" />
+              </label>
+              <label>
+                운동 빈도
+                <select id="activity" name="activity">
+                  <option value="1.2">낮음</option>
+                  <option value="1.375">주 1-3회</option>
+                  <option value="1.55">주 3-5회</option>
+                  <option value="1.725">주 6회 이상</option>
+                </select>
+              </label>
+              <label>
+                식사 횟수
+                <select id="meals" name="meals">
+                  <option value="3">3끼</option>
+                  <option value="4">4끼</option>
+                  <option value="5">5끼</option>
+                </select>
+              </label>
+            </div>
+
+            <label class="full-field">
+              제외 식품
+              <input id="avoid" name="avoid" type="text" placeholder="예: 우유, 견과류, 돼지고기" />
+            </label>
+
+            <label class="full-field">
+              코칭 메모
+              <textarea id="memo" name="memo" rows="4" placeholder="생활 패턴, 외식 빈도, 선호 음식"></textarea>
+            </label>
+          </form>
+
+          <section class="panel summary-panel">
+            <div class="panel-heading">
+              <h3>목표 섭취량</h3>
+              <span id="goalBadge">감량</span>
+            </div>
+            <div class="macro-ring" aria-label="목표 칼로리">
+              <div>
+                <strong id="calories">0</strong>
+                <span>kcal</span>
+              </div>
+            </div>
+            <div class="macro-bars">
+              <div>
+                <span>단백질</span>
+                <strong id="protein">0g</strong>
+                <i style="--bar: 0%"></i>
+              </div>
+              <div>
+                <span>탄수화물</span>
+                <strong id="carbs">0g</strong>
+                <i style="--bar: 0%"></i>
+              </div>
+              <div>
+                <span>지방</span>
+                <strong id="fat">0g</strong>
+                <i style="--bar: 0%"></i>
+              </div>
+            </div>
+          </section>
+
+          <section class="panel meal-panel">
+            <div class="panel-heading">
+              <h3>끼니별 가이드</h3>
+            </div>
+            <div class="meal-list" id="mealList"></div>
+          </section>
+
+          <section class="panel grocery-panel">
+            <div class="panel-heading">
+              <h3>선택지 요약</h3>
+              <span id="itemCount">0개</span>
+            </div>
+            <div class="grocery-list" id="groceryList"></div>
+          </section>
+
+          <section class="panel message-panel">
+            <div class="panel-heading">
+              <h3>회원 발송문</h3>
+              <button class="ghost-action" id="copyMessageBtn" type="button">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 8h10v12H8z" /><path d="M6 16H4V4h12v2" /></svg>
+                복사
+              </button>
+            </div>
+            <textarea id="clientMessage" rows="8" readonly></textarea>
+          </section>
+        </section>
+      </section>
+    </main>
+
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script>
+const STORAGE_KEY = "fitplate-coach-members";
+
+const macroChoices = {
+  carbs: ["밥/잡곡밥", "고구마/감자", "오트밀", "통밀빵", "과일", "파스타/면"],
+  protein: ["닭/소고기/돼지 안심", "생선/해산물", "달걀", "두부/콩류", "그릭요거트", "단백질 쉐이크"],
+  fat: ["견과류", "올리브오일", "아보카도", "달걀노른자", "등푸른 생선", "치즈 소량"]
+};
+
+const mealLabels = ["1끼", "2끼", "3끼", "4끼", "5끼"];
+const goalLabels = {
+  fatLoss: "감량",
+  muscleGain: "증량",
+  maintain: "유지"
+};
+
+const inviteData = readInviteData();
+let members = inviteData ? [] : loadMembers();
+let activeId = members[0]?.id;
+
+const els = {
+  memberList: document.querySelector("#memberList"),
+  form: document.querySelector("#profileForm"),
+  title: document.querySelector("#memberTitle"),
+  savedState: document.querySelector("#savedState"),
+  goalBadge: document.querySelector("#goalBadge"),
+  calories: document.querySelector("#calories"),
+  protein: document.querySelector("#protein"),
+  carbs: document.querySelector("#carbs"),
+  fat: document.querySelector("#fat"),
+  mealList: document.querySelector("#mealList"),
+  groceryList: document.querySelector("#groceryList"),
+  itemCount: document.querySelector("#itemCount"),
+  clientMessage: document.querySelector("#clientMessage"),
+  toast: document.querySelector("#toast")
+};
+
+if (inviteData) {
+  document.body.classList.add("client-view");
+  renderClientView(inviteData);
+} else {
+  attachAdminEvents();
+  render();
+}
+
+function attachAdminEvents() {
+  document.querySelector("#addMemberBtn").addEventListener("click", addMember);
+  document.querySelector("#resetBtn").addEventListener("click", () => {
+    members = createSampleMembers();
+    activeId = members[0].id;
+    saveMembers();
+    render();
+    showToast("샘플 데이터로 초기화했습니다.");
+  });
+  document.querySelector("#adminLinkBtn").addEventListener("click", copyAdminLink);
+  document.querySelector("#inviteLinkBtn").addEventListener("click", copyInviteLink);
+  document.querySelector("#deleteMemberBtn").addEventListener("click", deleteActiveMember);
+  document.querySelector("#copyMessageBtn").addEventListener("click", () => copyText(els.clientMessage.value));
+  document.querySelector("#copyPlanBtn").addEventListener("click", () => copyText(els.clientMessage.value));
+
+  els.form.addEventListener("input", (event) => {
+    const member = getActiveMember();
+    if (!member) return;
+    const target = event.target;
+    member[target.name] = target.type === "number" ? Number(target.value) : target.value;
+    els.savedState.textContent = "입력 중";
+    window.clearTimeout(window.saveTimer);
+    window.saveTimer = window.setTimeout(() => {
+      saveMembers();
+      render();
+      els.savedState.textContent = "저장됨";
+    }, 180);
+  });
+}
+
+function createSampleMembers() {
+  return [
+    {
+      id: crypto.randomUUID(),
+      name: "김서연",
+      goal: "fatLoss",
+      sex: "female",
+      age: 31,
+      height: 164,
+      weight: 62,
+      bodyFatPercent: 28,
+      bodyFatMass: 17.4,
+      skeletalMuscle: 23.6,
+      bmr: 1320,
+      activity: "1.55",
+      meals: "4",
+      avoid: "우유",
+      memo: "퇴근 후 운동. 점심은 회사 근처에서 해결하는 날이 많음."
+    },
+    {
+      id: crypto.randomUUID(),
+      name: "박민준",
+      goal: "muscleGain",
+      sex: "male",
+      age: 28,
+      height: 178,
+      weight: 73,
+      bodyFatPercent: 16,
+      bodyFatMass: 11.7,
+      skeletalMuscle: 35.2,
+      bmr: 1710,
+      activity: "1.725",
+      meals: "5",
+      avoid: "견과류",
+      memo: "오전 웨이트. 간식을 챙기면 식단 유지율이 높음."
+    }
+  ];
+}
+
+function loadMembers() {
+  const saved = localStorage.getItem(STORAGE_KEY);
+  if (!saved) return createSampleMembers();
+  try {
+    const parsed = JSON.parse(saved);
+    return Array.isArray(parsed) && parsed.length ? parsed.map(withDefaults) : createSampleMembers();
+  } catch {
+    return createSampleMembers();
+  }
+}
+
+function withDefaults(member) {
+  return {
+    bodyFatPercent: "",
+    bodyFatMass: "",
+    skeletalMuscle: "",
+    bmr: "",
+    ...member
+  };
+}
+
+function saveMembers() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(members));
+}
+
+function getActiveMember() {
+  return members.find((member) => member.id === activeId) || members[0];
+}
+
+function addMember() {
+  const member = {
+    id: crypto.randomUUID(),
+    name: `신규 회원 ${members.length + 1}`,
+    goal: "fatLoss",
+    sex: "female",
+    age: 30,
+    height: 165,
+    weight: 60,
+    bodyFatPercent: "",
+    bodyFatMass: "",
+    skeletalMuscle: "",
+    bmr: "",
+    activity: "1.375",
+    meals: "3",
+    avoid: "",
+    memo: ""
+  };
+  members.unshift(member);
+  activeId = member.id;
+  saveMembers();
+  render();
+}
+
+function deleteActiveMember() {
+  const member = getActiveMember();
+  if (!member) return;
+  const ok = window.confirm(`${member.name} 회원을 삭제할까요? 삭제하면 이 브라우저의 관리자 목록에서 사라집니다.`);
+  if (!ok) return;
+
+  members = members.filter((item) => item.id !== member.id);
+  if (!members.length) members = createSampleMembers();
+  activeId = members[0].id;
+  saveMembers();
+  render();
+  showToast("회원을 삭제했습니다.");
+}
+
+function render() {
+  const member = getActiveMember();
+  if (!member) return;
+  activeId = member.id;
+  const view = createMemberView(member);
+
+  renderMembers();
+  fillForm(member);
+  renderSummary(member, view.macros);
+  renderMeals(view.plans);
+  renderChoices(view.choices);
+  renderMessage(member, view.macros, view.plans, view.choices);
+}
+
+function createMemberView(member) {
+  const macros = calculateMacros(member);
+  const plans = buildMealGuides(member, macros);
+  const choices = summarizeChoices(plans);
+  return { member: sanitizeMember(member), macros, plans, choices };
+}
+
+function sanitizeMember(member) {
+  return {
+    name: member.name,
+    goal: member.goal,
+    meals: member.meals,
+    memo: member.memo || ""
+  };
+}
+
+function renderMembers() {
+  els.memberList.innerHTML = "";
+  members.forEach((member) => {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = `member-card${member.id === activeId ? " active" : ""}`;
+    button.innerHTML = `
+      <span><strong>${escapeHtml(member.name)}</strong>${goalLabels[member.goal]} · ${member.weight}kg · 체지방 ${member.bodyFatPercent || "-"}%</span>
+      <i>${member.meals}끼</i>
+    `;
+    button.addEventListener("click", () => {
+      activeId = member.id;
+      render();
+    });
+    els.memberList.appendChild(button);
+  });
+}
+
+function fillForm(member) {
+  Object.entries(member).forEach(([key, value]) => {
+    const field = els.form.elements[key];
+    if (field) field.value = value;
+  });
+  els.title.textContent = member.name;
+}
+
+function renderClientView(data) {
+  const member = data.member;
+  document.querySelector(".eyebrow").textContent = "회원 전용 식단 가이드";
+  els.title.textContent = `${member.name}님 식단`;
+  renderSummary(member, data.macros);
+  renderMeals(data.plans);
+  renderChoices(data.choices);
+}
+
+function calculateMacros(member) {
+  const weight = Number(member.weight) || 0;
+  const bmr = Number(member.bmr) || estimateBmr(member);
+  const activity = Number(member.activity) || 1.2;
+  const tdee = bmr * activity;
+  const goalShift = member.goal === "fatLoss" ? -0.16 : member.goal === "muscleGain" ? 0.12 : 0;
+  const calories = Math.max(1200, Math.round((tdee * (1 + goalShift)) / 10) * 10);
+  const mealCount = Number(member.meals) || 3;
+  const proteinFactor = member.goal === "muscleGain" ? 1.55 : member.goal === "fatLoss" ? 1.35 : 1.2;
+  const perMealProteinCap = member.goal === "muscleGain" ? 35 : 30;
+  const protein = Math.round(Math.min(weight * proteinFactor, mealCount * perMealProteinCap));
+  const fatRatio = member.goal === "fatLoss" ? 0.23 : 0.25;
+  const fat = Math.round((calories * fatRatio) / 9);
+  const carbs = Math.max(70, Math.round((calories - protein * 4 - fat * 9) / 4));
+  return { calories, protein, carbs, fat, bmr: Math.round(bmr), tdee: Math.round(tdee) };
+}
+
+function estimateBmr(member) {
+  const weight = Number(member.weight) || 0;
+  const height = Number(member.height) || 0;
+  const age = Number(member.age) || 0;
+  const fatPercent = Number(member.bodyFatPercent);
+  const fatMass = Number(member.bodyFatMass);
+
+  if (fatPercent > 0) {
+    const leanMass = weight * (1 - fatPercent / 100);
+    return 370 + 21.6 * leanMass;
+  }
+
+  if (fatMass > 0 && weight > fatMass) {
+    return 370 + 21.6 * (weight - fatMass);
+  }
+
+  return member.sex === "male"
+    ? 10 * weight + 6.25 * height - 5 * age + 5
+    : 10 * weight + 6.25 * height - 5 * age - 161;
+}
+
+function renderSummary(member, macros) {
+  els.goalBadge.textContent = `${goalLabels[member.goal]} · BMR ${macros.bmr.toLocaleString("ko-KR")}`;
+  els.calories.textContent = macros.calories.toLocaleString("ko-KR");
+  els.protein.textContent = `${macros.protein}g`;
+  els.carbs.textContent = `${macros.carbs}g`;
+  els.fat.textContent = `${macros.fat}g`;
+
+  const total = macros.protein * 4 + macros.carbs * 4 + macros.fat * 9;
+  const bars = document.querySelectorAll(".macro-bars i");
+  bars[0].style.setProperty("--bar", `${Math.round(((macros.protein * 4) / total) * 100)}%`);
+  bars[1].style.setProperty("--bar", `${Math.round(((macros.carbs * 4) / total) * 100)}%`);
+  bars[2].style.setProperty("--bar", `${Math.round(((macros.fat * 9) / total) * 100)}%`);
+}
+
+function buildMealGuides(member, macros) {
+  const count = Number(member.meals);
+  const avoid = String(member.avoid || "")
+    .split(",")
+    .map((item) => item.trim())
+    .filter(Boolean);
+  const choices = {
+    carbs: filteredChoices("carbs", avoid),
+    protein: filteredChoices("protein", avoid),
+    fat: filteredChoices("fat", avoid)
+  };
+
+  return Array.from({ length: count }, (_, index) => {
+    const ratio = 1 / count;
+    const carbs = Math.round(macros.carbs * ratio);
+    const protein = Math.round(macros.protein * ratio);
+    const fat = Math.max(5, Math.round(macros.fat * ratio));
+    const calories = Math.round((carbs * 4 + protein * 4 + fat * 9) / 10) * 10;
+
+    return {
+      name: mealLabels[index],
+      calories,
+      carbs,
+      protein,
+      fat,
+      ratio: macroRatio({ carbs, protein, fat, calories }),
+      choices
+    };
+  });
+}
+
+function filteredChoices(type, avoid) {
+  const options = macroChoices[type].filter((choice) => !avoid.some((word) => choice.includes(word)));
+  return options.length ? options : macroChoices[type];
+}
+
+function macroRatio(plan) {
+  const total = plan.carbs * 4 + plan.protein * 4 + plan.fat * 9 || plan.calories || 1;
+  return {
+    carbs: Math.round(((plan.carbs * 4) / total) * 100),
+    protein: Math.round(((plan.protein * 4) / total) * 100),
+    fat: Math.round(((plan.fat * 9) / total) * 100)
+  };
+}
+
+function summarizeChoices(plans) {
+  return {
+    carbs: plans[0]?.choices.carbs || macroChoices.carbs,
+    protein: plans[0]?.choices.protein || macroChoices.protein,
+    fat: plans[0]?.choices.fat || macroChoices.fat
+  };
+}
+
+function renderMeals(plans) {
+  els.mealList.innerHTML = "";
+  plans.forEach((plan) => {
+    const article = document.createElement("article");
+    article.className = "meal-card";
+    article.innerHTML = `
+      <header>
+        <h4>${plan.name}</h4>
+        <span>${plan.calories} kcal</span>
+      </header>
+      <div class="macro-pills">
+        <span>탄수화물 ${plan.carbs}g</span>
+        <span>단백질 ${plan.protein}g</span>
+        <span>지방 ${plan.fat}g</span>
+      </div>
+      <p>탄단지 비율: 탄 ${plan.ratio.carbs}% · 단 ${plan.ratio.protein}% · 지 ${plan.ratio.fat}%</p>
+    `;
+    els.mealList.appendChild(article);
+  });
+}
+
+function renderChoices(choices) {
+  const groups = [
+    ["탄수화물 추천 종류", choices.carbs],
+    ["단백질 추천 종류", choices.protein],
+    ["지방 추천 종류", choices.fat]
+  ];
+  els.itemCount.textContent = `${choices.carbs.length + choices.protein.length + choices.fat.length}개`;
+  els.groceryList.innerHTML = groups
+    .map(
+      ([title, items]) => `
+        <article class="choice-group">
+          <h4>${title}</h4>
+          <div>${items.map((item) => `<span>${escapeHtml(item)}</span>`).join("")}</div>
+        </article>
+      `
+    )
+    .join("");
+}
+
+function renderMessage(member, macros, plans, choices) {
+  const lines = plans
+    .map(
+      (plan) =>
+        `- ${plan.name}: ${plan.calories} kcal | 탄수화물 ${plan.carbs}g / 단백질 ${plan.protein}g / 지방 ${plan.fat}g` +
+        ` | 비율 탄 ${plan.ratio.carbs}% · 단 ${plan.ratio.protein}% · 지 ${plan.ratio.fat}%`
+    )
+    .join("\n");
+
+  els.clientMessage.value = `${member.name}님 오늘 식단 가이드입니다.
+
+목표: ${goalLabels[member.goal]} / ${macros.calories.toLocaleString("ko-KR")} kcal
+기초대사량 ${macros.bmr.toLocaleString("ko-KR")} kcal · 활동대사 추정 ${macros.tdee.toLocaleString("ko-KR")} kcal
+하루 목표: 탄수화물 ${macros.carbs}g · 단백질 ${macros.protein}g · 지방 ${macros.fat}g
+
+${lines}
+
+탄수화물 추천 종류: ${choices.carbs.join(", ")}
+단백질 추천 종류: ${choices.protein.join(", ")}
+지방 추천 종류: ${choices.fat.join(", ")}
+
+메모: 식품은 위 종류 안에서 편한 것으로 바꿔도 됩니다. 양은 탄단지 gram 기준으로 맞춰주세요.`;
+}
+
+function copyInviteLink() {
+  const member = getActiveMember();
+  if (!member) return;
+  if (window.location.protocol === "file:") {
+    copyText(`현재는 내 컴퓨터에서만 열리는 테스트 파일이라 카톡 초대 링크로 사용할 수 없습니다.
+
+카톡에서 클릭 가능한 초대 링크를 쓰려면 이 사이트를 먼저 인터넷에 배포해야 합니다.
+배포 후 관리자 화면에서 다시 초대 링크 복사를 누르면 ${member.name}님 전용 링크가 만들어집니다.`);
+    showToast("카톡 링크는 웹 배포 후 사용할 수 있습니다.");
+    return;
+  }
+  const payload = createMemberView(member);
+  const token = encodeInviteData(payload);
+  const url = new URL(window.location.href);
+  url.search = `?invite=${encodeURIComponent(token)}`;
+  url.hash = "";
+  copyText(url.toString());
+  showToast("회원 전용 초대 링크를 복사했습니다.");
+}
+
+function copyAdminLink() {
+  if (window.location.protocol === "file:") {
+    copyText(`현재는 내 컴퓨터에서만 열리는 테스트 파일이라 카톡 관리자 링크로 사용할 수 없습니다.
+
+카톡에서 클릭 가능한 관리자 링크를 쓰려면 이 사이트를 먼저 인터넷에 배포해야 합니다.
+배포 후 관리자 화면에서 다시 관리자 링크 복사를 누르면 트레이너에게 보낼 수 있는 링크가 만들어집니다.`);
+    showToast("관리자 링크는 웹 배포 후 사용할 수 있습니다.");
+    return;
+  }
+
+  const url = new URL(window.location.href);
+  url.search = "";
+  url.hash = "";
+  copyText(url.toString());
+  showToast("관리자 링크를 복사했습니다.");
+}
+
+function encodeInviteData(data) {
+  const json = JSON.stringify(data);
+  return btoa(unescape(encodeURIComponent(json)))
+    .replaceAll("+", "-")
+    .replaceAll("/", "_")
+    .replaceAll("=", "");
+}
+
+function readInviteData() {
+  const token = new URLSearchParams(window.location.search).get("invite");
+  if (!token) return null;
+  try {
+    const normalized = token.replaceAll("-", "+").replaceAll("_", "/");
+    const padded = normalized.padEnd(Math.ceil(normalized.length / 4) * 4, "=");
+    return JSON.parse(decodeURIComponent(escape(atob(padded))));
+  } catch {
+    return null;
+  }
+}
+
+async function copyText(text) {
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast("복사했습니다.");
+  } catch {
+    els.clientMessage.select();
+    document.execCommand("copy");
+    showToast("복사했습니다.");
+  }
+}
+
+function showToast(message) {
+  els.toast.textContent = message;
+  els.toast.classList.add("show");
+  window.clearTimeout(window.toastTimer);
+  window.toastTimer = window.setTimeout(() => els.toast.classList.remove("show"), 1800);
+}
+
+function escapeHtml(value) {
+  return String(value)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+</script>
+  </body>
+</html>
+
